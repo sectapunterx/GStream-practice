@@ -3,7 +3,7 @@
 
 GstElement* pipeline;
 
-//TODO: уменьшить размер выходного файла
+//TODO: СѓРјРµРЅСЊС€РёС‚СЊ СЂР°Р·РјРµСЂ РІС‹С…РѕРґРЅРѕРіРѕ С„Р°Р№Р»Р°
 
 static void sigint_handler(int signum) {
     g_print("Received SIGINT, stopping pipeline.\n");
@@ -11,45 +11,45 @@ static void sigint_handler(int signum) {
 }
 
 static void on_pad_added(GstElement* element, GstPad* pad, gpointer data) {
-    gchar* name = gst_pad_get_name(pad);  // Получаем имя вновь добавленного пина.
+    gchar* name = gst_pad_get_name(pad);  // РџРѕР»СѓС‡Р°РµРј РёРјСЏ РІРЅРѕРІСЊ РґРѕР±Р°РІР»РµРЅРЅРѕРіРѕ РїРёРЅР°.
 
-    GstElement* other_element = NULL;  // Инициализируем указатель на другой элемент, который будет получать данные с этого пина.
+    GstElement* other_element = NULL;  // РРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РґСЂСѓРіРѕР№ СЌР»РµРјРµРЅС‚, РєРѕС‚РѕСЂС‹Р№ Р±СѓРґРµС‚ РїРѕР»СѓС‡Р°С‚СЊ РґР°РЅРЅС‹Рµ СЃ СЌС‚РѕРіРѕ РїРёРЅР°.
 
-    // Проверяем, имеет ли имя пина префикс, указывающий на то, что это аудио-пин.
+    // РџСЂРѕРІРµСЂСЏРµРј, РёРјРµРµС‚ Р»Рё РёРјСЏ РїРёРЅР° РїСЂРµС„РёРєСЃ, СѓРєР°Р·С‹РІР°СЋС‰РёР№ РЅР° С‚Рѕ, С‡С‚Рѕ СЌС‚Рѕ Р°СѓРґРёРѕ-РїРёРЅ.
     if (g_str_has_prefix(name, "audio")) {
-        // Получаем элемент 'audio_queue' из конвейера.
+        // РџРѕР»СѓС‡Р°РµРј СЌР»РµРјРµРЅС‚ 'audio_queue' РёР· РєРѕРЅРІРµР№РµСЂР°.
         other_element = gst_bin_get_by_name(GST_BIN(pipeline), "audio_queue");
 
-        // Получаем пин приемника элемента 'audio_queue'.
+        // РџРѕР»СѓС‡Р°РµРј РїРёРЅ РїСЂРёРµРјРЅРёРєР° СЌР»РµРјРµРЅС‚Р° 'audio_queue'.
         GstPad* sinkpad = gst_element_get_static_pad(other_element, "sink");
 
-        // Соединяем пины, чтобы установить связь между демультиплексором/декодером и элементом 'audio_queue'.
+        // РЎРѕРµРґРёРЅСЏРµРј РїРёРЅС‹, С‡С‚РѕР±С‹ СѓСЃС‚Р°РЅРѕРІРёС‚СЊ СЃРІСЏР·СЊ РјРµР¶РґСѓ РґРµРјСѓР»СЊС‚РёРїР»РµРєСЃРѕСЂРѕРј/РґРµРєРѕРґРµСЂРѕРј Рё СЌР»РµРјРµРЅС‚РѕРј 'audio_queue'.
         if (gst_pad_link(pad, sinkpad) != GST_PAD_LINK_OK) {
-            g_printerr("Не удалось установить связь между демультиплексором/декодером и аудио\n");
+            g_printerr("РќРµ СѓРґР°Р»РѕСЃСЊ СѓСЃС‚Р°РЅРѕРІРёС‚СЊ СЃРІСЏР·СЊ РјРµР¶РґСѓ РґРµРјСѓР»СЊС‚РёРїР»РµРєСЃРѕСЂРѕРј/РґРµРєРѕРґРµСЂРѕРј Рё Р°СѓРґРёРѕ\n");
         }
-        gst_object_unref(sinkpad);  // Освобождаем ссылку на пин приемника.
+        gst_object_unref(sinkpad);  // РћСЃРІРѕР±РѕР¶РґР°РµРј СЃСЃС‹Р»РєСѓ РЅР° РїРёРЅ РїСЂРёРµРјРЅРёРєР°.
     }
-    // Проверяем, имеет ли имя пина префикс, указывающий на то, что это видео-пин.
+    // РџСЂРѕРІРµСЂСЏРµРј, РёРјРµРµС‚ Р»Рё РёРјСЏ РїРёРЅР° РїСЂРµС„РёРєСЃ, СѓРєР°Р·С‹РІР°СЋС‰РёР№ РЅР° С‚Рѕ, С‡С‚Рѕ СЌС‚Рѕ РІРёРґРµРѕ-РїРёРЅ.
     else if (g_str_has_prefix(name, "video")) {
-        // Получаем элемент 'video_queue' из конвейера.
+        // РџРѕР»СѓС‡Р°РµРј СЌР»РµРјРµРЅС‚ 'video_queue' РёР· РєРѕРЅРІРµР№РµСЂР°.
         other_element = gst_bin_get_by_name(GST_BIN(pipeline), "video_queue");
 
-        // Получаем пин приемника элемента 'video_queue'.
+        // РџРѕР»СѓС‡Р°РµРј РїРёРЅ РїСЂРёРµРјРЅРёРєР° СЌР»РµРјРµРЅС‚Р° 'video_queue'.
         GstPad* sinkpad = gst_element_get_static_pad(other_element, "sink");
 
-        // Соединяем пины, чтобы установить связь между демультиплексором/декодером и элементом 'video_queue'.
+        // РЎРѕРµРґРёРЅСЏРµРј РїРёРЅС‹, С‡С‚РѕР±С‹ СѓСЃС‚Р°РЅРѕРІРёС‚СЊ СЃРІСЏР·СЊ РјРµР¶РґСѓ РґРµРјСѓР»СЊС‚РёРїР»РµРєСЃРѕСЂРѕРј/РґРµРєРѕРґРµСЂРѕРј Рё СЌР»РµРјРµРЅС‚РѕРј 'video_queue'.
         if (gst_pad_link(pad, sinkpad) != GST_PAD_LINK_OK) {
-            g_printerr("Не удалось установить связь между демультиплексором/декодером и видео\n");
+            g_printerr("РќРµ СѓРґР°Р»РѕСЃСЊ СѓСЃС‚Р°РЅРѕРІРёС‚СЊ СЃРІСЏР·СЊ РјРµР¶РґСѓ РґРµРјСѓР»СЊС‚РёРїР»РµРєСЃРѕСЂРѕРј/РґРµРєРѕРґРµСЂРѕРј Рё РІРёРґРµРѕ\n");
         }
 
-        gst_object_unref(sinkpad);  // Освобождаем ссылку на пин приемника.
+        gst_object_unref(sinkpad);  // РћСЃРІРѕР±РѕР¶РґР°РµРј СЃСЃС‹Р»РєСѓ РЅР° РїРёРЅ РїСЂРёРµРјРЅРёРєР°.
     }
 
-    GstCaps* caps = gst_pad_query_caps(pad, NULL);  // Запрашиваем характеристики пина.
-    g_print("Характеристики пина %s: %s\n", name, gst_caps_to_string(caps));  // Выводим характеристики пина на печать.
-    gst_caps_unref(caps);  // Освобождаем ресурсы, выделенные под характеристики пина.
+    GstCaps* caps = gst_pad_query_caps(pad, NULL);  // Р—Р°РїСЂР°С€РёРІР°РµРј С…Р°СЂР°РєС‚РµСЂРёСЃС‚РёРєРё РїРёРЅР°.
+    g_print("РҐР°СЂР°РєС‚РµСЂРёСЃС‚РёРєРё РїРёРЅР° %s: %s\n", name, gst_caps_to_string(caps));  // Р’С‹РІРѕРґРёРј С…Р°СЂР°РєС‚РµСЂРёСЃС‚РёРєРё РїРёРЅР° РЅР° РїРµС‡Р°С‚СЊ.
+    gst_caps_unref(caps);  // РћСЃРІРѕР±РѕР¶РґР°РµРј СЂРµСЃСѓСЂСЃС‹, РІС‹РґРµР»РµРЅРЅС‹Рµ РїРѕРґ С…Р°СЂР°РєС‚РµСЂРёСЃС‚РёРєРё РїРёРЅР°.
 
-    g_free(name);  // Освобождаем память, выделенную под имя пина.
+    g_free(name);  // РћСЃРІРѕР±РѕР¶РґР°РµРј РїР°РјСЏС‚СЊ, РІС‹РґРµР»РµРЅРЅСѓСЋ РїРѕРґ РёРјСЏ РїРёРЅР°.
 }
 
 
@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
     GstElement* video_decoder = gst_element_factory_make("vp9dec", "video_decoder");
     GstElement* audio_decoder = gst_element_factory_make("opusdec", "audio_decoder");
     GstElement* video_sink = gst_element_factory_make("autovideosink", "video_sink");  // New video sink
-    //GstElement* audio_sink = gst_element_factory_make("autoaudiosink", "audio_sink");  // Видео webm не проигрывается
+    //GstElement* audio_sink = gst_element_factory_make("autoaudiosink", "audio_sink");  // Р’РёРґРµРѕ webm РЅРµ РїСЂРѕРёРіСЂС‹РІР°РµС‚СЃСЏ
     GstElement* tee = gst_element_factory_make("tee", "tee"); 
     GstElement* avi_mux = gst_element_factory_make("avimux", "avi_mux");
     GstElement* file_sink = gst_element_factory_make("filesink", "file_sink");
@@ -88,7 +88,7 @@ int main(int argc, char* argv[]) {
         return -1;
     }
     else {
-        g_object_set(video_encoder, "quality", 100, NULL);  // Устанавливаем качество на максимум
+        g_object_set(video_encoder, "quality", 100, NULL);  // РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј РєР°С‡РµСЃС‚РІРѕ РЅР° РјР°РєСЃРёРјСѓРј
         g_printerr("Video encoder element created successfully.\n");
     }
 
