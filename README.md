@@ -3,4 +3,8 @@
  
 .webm -> .avi conversion
 # Launch
-./a.out /temp/vid.webm /temp/output.avi
+Place the video (optional: in the temp) folder.
+
+Compile the main.cpp file
+
+`./a.out /temp/some_video.webm /temp/output.avi`
